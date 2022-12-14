@@ -1,0 +1,11 @@
+fastapi==0.88.0
+passlib==1.7.4
+Pillow==9.3.0
+pydantic==1.10.2
+PyJWT==2.6.0
+python-dotenv==0.21.0
+starlette==0.23.1
+tortoise==0.1.1
+tortoise-orm==0.19.2
+python-multipart==0.0.5
+bcrypt==4.0.1
