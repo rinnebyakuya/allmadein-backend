@@ -1,5 +1,6 @@
 from fastapi import (FastAPI, BackgroundTasks, UploadFile,
                      File, Form, Depends, HTTPException, status, Request)
+from fastapi.middleware.cors import CORSMiddleware
 from packages.tortoise_contrib_fastapi import register_tortoise
 from models import (User, Business, Product, user_pydantic, user_pydanticIn,
                     product_pydantic, product_pydanticIn, business_pydantic,
@@ -45,6 +46,13 @@ from fastapi.responses import HTMLResponse
 
 config_credentials = dict(dotenv_values(".env"))
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = ["*"],
+    allow_methods = ["*"],
+    allow_headers = ["*"],
+)
 
 # static files
 # pip install aiofiles
