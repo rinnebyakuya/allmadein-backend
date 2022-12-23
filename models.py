@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from tortoise import fields
 from tortoise.contrib.pydantic import pydantic_model_creator
 from datetime import datetime
+from typing import Literal
 
 # Referrences:
 # https://stackoverflow.com/questions/7296846/how-to-implement-one-to-one-one-to-many-and-many-to-many-relationships-while-de
@@ -34,7 +35,33 @@ class Product(Model):
     # 12 signinficant digits, 2 of the significant digits are decimals.
     id = fields.IntField(pk=True, index=True)
     name = fields.CharField(max_length=100, null=False, index=True)
-    category = fields.CharField(max_length=20, index=True)
+    main_category = fields.CharField(
+        max_length=30, index=True, null=True,
+        # specify the allowed values for the category field using Literal
+        typing=Literal[
+            "Clothes",
+            "Electronics",
+            "Household Appliances",
+            "Accommodation",
+            "Cars and supplies",
+            "Furniture",
+            "Other"
+        ]
+    )
+    category = fields.CharField(
+        max_length=30, index=True,
+        # specify the allowed values for the category field using Literal
+        typing=Literal[
+            "Women’s Clothing", "Men’s Clothing", "Children’s Clothing",
+            "Phones and tablets", "Photo and video cameras", "computers", "TV, audio systems",
+            "Refrigerators", "Stoves and ovens", "Washing machines", "Climatic equipment", "Other appliances",
+            "Apartment for sale", "Houses for sale", "Apartment rent", "Houses rent",
+            "Cars", "Motorcycles", "Buses and Trucks", "Special machinery", "Trailers",
+            "Spare parts and wheels", "Accessories and equipment", "Car care products",
+            "Beds and mattresses", "Tables and Chairs", "Sofas and armchairs", "Kitchen sets", "Storing",
+            "Services", "Sports and recreation", "Books and hobbies", "Pets", "Job", "Other ungrouped"
+        ]
+    )
     original_price = fields.DecimalField(max_digits=12, decimal_places=2)
     new_price = fields.DecimalField(max_digits=12, decimal_places=2)
     percentage_discount = fields.IntField()
@@ -65,4 +92,4 @@ business_pydanticIn = pydantic_model_creator(
 
 product_pydantic = pydantic_model_creator(Product, name="Product")
 product_pydanticIn = pydantic_model_creator(Product, name="ProductIn",
-                                            exclude=("percentage_discount", "id"))
+                                            exclude=("percentage_discount", "id", "main_category"))
