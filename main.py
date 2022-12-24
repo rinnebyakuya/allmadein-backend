@@ -1,7 +1,6 @@
 from fastapi import (FastAPI, BackgroundTasks, UploadFile,
                      File, Form, Depends, HTTPException, status, Request)
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_login import LoginManager
 from packages.tortoise_contrib_fastapi import register_tortoise
 from pydantic.utils import GetterDict
 from models import (User, Business, Product, user_pydantic, user_pydanticIn,
@@ -48,7 +47,6 @@ from fastapi.responses import HTMLResponse
 
 config_credentials = dict(dotenv_values(".env"))
 app = FastAPI()
-manager = LoginManager(config_credentials['SECRET'], '/login')
 
 app.add_middleware(
     CORSMiddleware,
@@ -175,6 +173,7 @@ async def add_new_product(product: product_pydanticIn,
     product_obj = await Product.create(**product, business=user, main_category=main_category)
     product_obj = await product_pydantic.from_tortoise_orm(product_obj)
     return {"status": "ok", "data": product_obj}
+
 
 @app.get("/products")
 async def get_products():
@@ -317,6 +316,3 @@ register_tortoise(
     generate_schemas=True,
     add_exception_handlers=True
 )
-
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True)
