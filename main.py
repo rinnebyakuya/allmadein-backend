@@ -127,7 +127,7 @@ async def get_current_user(token: str = Depends(oath2_scheme)):
 async def user_login(user: user_pydantic = Depends(get_current_user)):
     business = await Business.get(owner=user)
     logo = business.logo
-    logo = "localhost:8000/static/images/"+logo
+    logo = "52.192.85.84/static/images/"+logo
 
     return {"status": "ok",
             "data":
@@ -209,17 +209,18 @@ async def specific_product(id: int):
 
 @app.delete("/products/{id}")
 async def delete_product(id: int, user: user_pydantic = Depends(get_current_user)):
-    product = await Product.get(id=id)
-    business = await product.business
+    product = await Product.get(id = id)
+    business =  await product.business
     owner = await business.owner
     if user == owner:
-        product.delete()
-        return {"status": "ok"}
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Not authenticated to perform this action",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+        await Product.filter(id=id).delete()
+        return {"status" : "ok"}
+    else:
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED, 
+            detail = "Not authenticated to perform this action",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
 
 # image upload
@@ -260,7 +261,7 @@ async def create_upload_file(file: UploadFile = File(...),
             detail="Not authenticated to perform this action",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    file_url = "localhost:8000" + generated_name[1:]
+    file_url = "52.192.85.84" + generated_name[1:]
     return {"status": "ok", "filename": file_url}
 
 
@@ -305,7 +306,7 @@ async def create_upload_file(id: int, file: UploadFile = File(...),
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    file_url = "localhost:8000" + generated_name[1:]
+    file_url = "52.192.85.84" + generated_name[1:]
     return {"status": "ok", "filename": file_url}
 
 
